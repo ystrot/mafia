@@ -1,0 +1,57 @@
+<html>
+	<head>
+		<title>Mafia Game</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link href="css/main.css" rel="stylesheet">
+		<link href="css/normalize.css" rel="stylesheet">
+		<link href="css/flipclock.css" rel="stylesheet">
+
+		<script src="js/mafia.js"></script>
+		<script src="js/ui.js"></script>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+		<script src="js/typeahead.min.js"></script>
+		<script src="js/hogan-2.0.0.js"></script>
+
+		<script src="js/jquery.countdown.js"></script>
+
+		<script src="js/flipclock/libs/base.js"></script>
+		<script src="js/flipclock/flipclock.js"></script>
+		<script src="js/flipclock/faces/hourlycounter.js"></script>
+		<script src="js/flipclock/faces/minutecounter.js"></script>
+
+		<script>$(document).ready(setup);</script>
+	</head>
+	<body>
+	  <div id="field">
+		  <div id="players">
+		    <div id="player0" class="player" style="display: none;">
+				<div id="num0" class="num">0</div>
+				<div id="pic0" class="pic"></div>
+				<div id="name0" class="name">
+					<span id="valName0" class="valName"></span>
+					<div id="varName0" style="display:none;">
+						<input id="inputName0" />
+					</div>
+				</div>
+				<div id="role0" class="role"></div>
+
+				<div id="nomPic0" class="nomPic"></div>
+				<div id="nomNum0" class="nomNum">X</div>
+
+				<div id="foulPic0" class="foulPic"></div>
+				<div id="foulNum0" class="foulNum">0</div>
+
+				<div id="dis0" class="dis"></div>
+			</div>
+		  </div>
+		  <div id="state">
+		  </div>
+		  <div id="timer">
+		    Таймер
+		    <div id="clock"></div>
+		  </div>
+	  </div>
+	</body>
+</html>
