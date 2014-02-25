@@ -1,0 +1,16 @@
+html {
+	background: #000 url("../img/curtain.jpg") repeat-x 50% 0;
+}
+
+.player {
+	background-image: url("../img/gold.png");
+}
+
+#showRoles {
+	color: white;
+}
+
+#state, #timer {
+	background: #fff url("../img/content-bg.jpg") no-repeat;
+	border-radius: 7px;
+}

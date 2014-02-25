@@ -24,8 +24,6 @@
 	left: 420px;
 	width: 400px;
 	height: 100px;
-	border-radius: 10px;
-	border: 1px solid blue;
 	padding: 10px;
 	line-height: 20px;
 }
@@ -36,8 +34,14 @@
 	right: 2%;
 	width: 26%;
 	height: 90%;
-	border-radius: 10px;
-	border: 1px solid blue;
+}
+
+#showRoles {
+	position: absolute;
+	top: 400px;
+	width: 100%;
+	left: 0px;
+	text-align: center;
 }
 
 .player {
@@ -46,8 +50,6 @@
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	border-radius: 5px;
-	border: 1px solid blue;
 }
 
 .num {
@@ -150,6 +152,25 @@
 	border-bottom: 1px solid blue;
 }
 
+#roleDialog {
+	display: none;
+	position: fixed;
+	z-index: 10;
+	top: 200px;
+	left: 500px;
+	padding: 5px;
+	background-color: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+	 -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+		  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+
+}
+
+#roleDialog input {
+	margin: 3px;
+}
+
 .tt-query {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -180,7 +201,7 @@
   margin: 0px;
 }
 
-.tt-suggestion.tt-is-under-cursor {
+.tt-suggestion.tt-cursor {
   color: #000;
   background-color: #eeeeee;
 }
@@ -191,17 +212,21 @@
 	color: #000;
 }
 
-.actionEnabled {
+.linkOn {
 	border-bottom: 1px solid blue;
 	color: blue;
 	cursor: pointer;
 }
 
-.actionDisabled {
+.linkOff {
 	border-bottom: 1px solid gray;
 	color: gray;
 }
 
-.inactive {
+.itemOn {
+	opacity: 0.1;
+}
+
+.itemOff {
 	opacity: 0.1;
 }

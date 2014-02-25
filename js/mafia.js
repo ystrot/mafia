@@ -9,6 +9,7 @@ function mafSetup() {
 
 var MAF_EVENT_TABLE_READY = "ready";
 var MAF_EVENT_START = "start";
+var MAF_EVENT_ROLES = "roles";
 
 var mafListeners = {};
 
@@ -23,10 +24,12 @@ function onMafEvent(code, f) {
 
 function fireMafEvent(code, d) {
 	var list = mafListeners[code];
-	for(var i = 0; i < list.length; i++) {
-		var listener = list[i];
-		listener(d);
-	}	
+	if (list) {
+		for(var i = 0; i < list.length; i++) {
+			var listener = list[i];
+			listener(d);
+		}	
+	}
 }
 
 // PLAYERS
@@ -76,6 +79,35 @@ function getPlayer(name) {
 	return null;
 }
 
+function getRole(num) {
+	var player = mafPlayers[num - 1];
+	if (player) {
+		return player.role;
+	}
+	return null;
+}
+
+function setRole(num, role) {
+	mafPlayers[num - 1].role = role;
+	verifyRoles();
+}
+
+function verifyRoles() {
+	var roles = {"civ": 6, "maf": 2, "com": 1, "don": 1};
+	for(var i = 0; i < 10; i++) {
+		var role = mafPlayers[i].role;
+		roles[role] = roles[role] - 1;
+	}
+	var ready = true;
+	for (var role in roles){
+		if (roles[role] != 0) {
+			ready = false;
+			break;
+		}
+	}
+	fireMafEvent(MAF_EVENT_ROLES, {"ready": ready});
+}
+
 // TABLE
 
 var mafTable = [];
@@ -89,6 +121,7 @@ function setupTable() {
 
 function sitPlayer(num, player) {
 	mafTable[num - 1] = player;
+	player.role = "civ";
 	for (var i = 0; i < 10; i++) {
 		if (mafTable[i] == null) {
 			return;
