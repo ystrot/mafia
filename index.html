@@ -8,10 +8,12 @@
 		<link href="css/normalize.css" rel="stylesheet">
 		<link href="css/flipclock.css" rel="stylesheet">
 
+		<script src="js/bind.js"></script>
 		<script src="js/mafia.js"></script>
 		<script src="js/ui.js"></script>
 
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="js/jquery-2.1.0.min.js"></script>
+		<script src="js/jquery-2.1.0.min.map"></script>
 
 		<script src="js/tah/bloodhound.js"></script>
 		<script src="js/tah/typeahead.bundle.js"></script>
@@ -39,6 +41,7 @@
 						</div>
 					</div>
 					<div id="role0" class="role"></div>
+					<div id="mask0" class="mask"></div>
 
 					<div id="nomPic0" class="nomPic"></div>
 					<div id="nomNum0" class="nomNum">X</div>
@@ -52,10 +55,30 @@
 					<input type="checkbox" onclick="updateRoles()" id="showRolesButton"> Показать роли
 				</div>
 			</div>
-			<div id="state">
+			<div id="tools">
+				<div class="tool" id="seating">
+					Укажите игроков, чтобы <span id='mafSeatingReady' onclick='casting()'>начать игру</span>.
+				</div>
+				<div class="tool" id="casting">
+					В городе ночь. Раздайте карты и разбудите дона и его мафию.<br>
+					У мафии есть <span id="mafComplotReady" onclick="complot()">минута на договорку</span>.<br>
+					Затем дайте <span id="mafLookoutReady" onclick="lookout()">30 секунд коммисару</span>, чтобы осмотреть город.<br>
+					Указав роли игроков, объявите <span id='mafCastingReady' onclick='wakeup()'>утро в городе</span>.
+				</div>
+				<div class="tool" id="day">
+					День №<span class="dayNum"></span>. На голосовании
+						<span id="voteNobody">никто не выставлен.</span>
+						<span id="voteList" style="display: none;">выставлены: .</span>
+
+				</div>
+				<div class="tool" id="night">
+					Ночь №<span class="dayNum"></span>.
+				</div>
+				<div class="tool" id="timer">
+					<div id="clock"></div>
+				</div>
 			</div>
-			<div id="timer">
-				<div id="clock"></div>
+			<div id="log">
 			</div>
 
 			<!-- Tools -->

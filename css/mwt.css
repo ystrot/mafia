@@ -10,7 +10,7 @@ html {
 	color: white;
 }
 
-#state, #timer {
+.tool, #log {
 	background: #fff url("../img/content-bg.jpg") no-repeat;
 	border-radius: 7px;
 }

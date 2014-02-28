@@ -18,22 +18,37 @@
 	height: 100%;
 }
 
+#tools {
+	position: absolute;
+	top: 0px;
+	left: 420px;
+	width: 400px;
+}
+
+.tool {
+	padding: 10px;
+	line-height: 20px;
+	margin-bottom: 10px;
+	display: none;
+}
+
 #state {
 	position: absolute;
 	top: 0px;
 	left: 420px;
 	width: 400px;
-	height: 100px;
 	padding: 10px;
 	line-height: 20px;
 }
 
-#timer {
+#log {
 	position: absolute;
 	top: 0px;
 	right: 2%;
 	width: 26%;
 	height: 90%;
+	padding: 10px;
+	line-height: 20px;
 }
 
 #showRoles {
@@ -88,6 +103,17 @@
 }
 
 .role {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	top: 3px;
+	right: 156px;
+	cursor: pointer;
+	background-image: url("../img/none.png");
+	display: none;
+}
+
+.mask {
 	width: 24px;
 	height: 24px;
 	position: absolute;

@@ -3,7 +3,7 @@
 	border: 1px solid blue;
 }
 
-#state, #timer {
+.tool, #log {
 	border-radius: 10px;
 	border: 1px solid blue;
 }

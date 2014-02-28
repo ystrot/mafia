@@ -1,35 +1,16 @@
-// SETUP
-
-function mafSetup() {
-	setupPlayers();
-	setupTable();
-}
-
 // EVENTS
 
-var MAF_EVENT_TABLE_READY = "ready";
-var MAF_EVENT_START = "start";
-var MAF_EVENT_ROLES = "roles";
+var mafListeners = [];
 
-var mafListeners = {};
-
-function onMafEvent(code, f) {
-	var list = mafListeners[code];
-	if (list == null) {
-		list = [];
-		mafListeners[code] = list;
-	}
-	list.push(f);
+function onMafEvent(f) {
+	mafListeners.push(f);
 }
 
-function fireMafEvent(code, d) {
-	var list = mafListeners[code];
-	if (list) {
-		for(var i = 0; i < list.length; i++) {
-			var listener = list[i];
-			listener(d);
-		}	
-	}
+function fireMafEvent(e) {
+	for(var i = 0; i < mafListeners.length; i++) {
+		var f = mafListeners[i];
+		f(e);
+	}	
 }
 
 // PLAYERS
@@ -58,18 +39,6 @@ var mafPlayers = [
 	{"id": 21, "name": "Джери",            "pic": "https://pp.vk.me/c616425/v616425945/dde/l-meanyhMDo.jpg"}
 ];
 
-var mafPlayerNames = [];
-
-function setupPlayers() {
-	for (var i = 0; i < mafPlayers.length; i++) {
-		mafPlayerNames.push(mafPlayers[i].name);
-	}
-}
-
-function getPlayerNames() {
-	return mafPlayerNames;
-}
-
 function getPlayer(name) {
 	for (var i = 0; i < mafPlayers.length; i++) {
 		if (name == mafPlayers[i].name) {
@@ -77,6 +46,60 @@ function getPlayer(name) {
 		}
 	}
 	return null;
+}
+
+// SEATING
+
+var mafTable;
+var mafSeatingReady;
+
+function seating() {
+	mafTable = [];
+	for (var i = 0; i < 10; i++) {
+		mafTable.push(null);
+	}
+	mafSeatingReady = new Var(false);
+	fireMafEvent({type: "seating"});
+}
+
+function sitPlayer(num, player) {
+	mafTable[num - 1] = player;
+	player.role = "civ";
+	for (var i = 0; i < 10; i++) {
+		if (mafTable[i] == null) {
+			return;
+		}
+	}
+	mafSeatingReady.set(true);
+}
+
+// CASTING
+
+var mafCastingReady;
+var mafComplotReady;
+var mafLookoutReady;
+
+function casting() {
+	if (mafSeatingReady.get()) {
+		mafCastingReady = new Var(false);
+		mafComplotReady = new Var(true);
+		mafLookoutReady = new Var(true);
+		fireMafEvent({type: "casting"});
+	}
+}
+
+function complot() {
+	if (mafComplotReady.get()) {
+		mafComplotReady.set(false);
+		fireMafEvent({type: "complot"});
+	}
+}
+
+function lookout() {
+	if (mafLookoutReady.get()) {
+		mafLookoutReady.set(false);
+		fireMafEvent({type: "lookout"});
+	}
 }
 
 function getRole(num) {
@@ -89,6 +112,7 @@ function getRole(num) {
 
 function setRole(num, role) {
 	mafPlayers[num - 1].role = role;
+	fireMafEvent({type: "role", num: num, role: role});
 	verifyRoles();
 }
 
@@ -98,37 +122,46 @@ function verifyRoles() {
 		var role = mafPlayers[i].role;
 		roles[role] = roles[role] - 1;
 	}
-	var ready = true;
-	for (var role in roles){
+	for (var role in roles) {
 		if (roles[role] != 0) {
-			ready = false;
-			break;
-		}
-	}
-	fireMafEvent(MAF_EVENT_ROLES, {"ready": ready});
-}
-
-// TABLE
-
-var mafTable = [];
-var mafTableReady = false;
-
-function setupTable() {
-	for (var i = 0; i < 10; i++) {
-		mafTable.push(null);
-	}
-}
-
-function sitPlayer(num, player) {
-	mafTable[num - 1] = player;
-	player.role = "civ";
-	for (var i = 0; i < 10; i++) {
-		if (mafTable[i] == null) {
+			mafCastingReady.set(false);
 			return;
 		}
 	}
-	if (!mafTableReady) {
-		mafTableReady = true;
-		fireMafEvent(MAF_EVENT_TABLE_READY);
-	}
+	mafCastingReady.set(true);
+}
+
+// DAY
+
+var dayNum;
+var kill;
+var opening;
+
+function wakeup() {
+	dayNum = new Var(0);
+	opening = 0;
+	kill = null;
+	day();
+}
+
+function day() {
+	dayNum.set(dayNum.get() + 1);
+	lookupOpening();
+	fireMafEvent({type: "day", num: dayNum.get()});
+}
+
+function isDead(num) {
+	var player = mafPlayers[num - 1];
+	if (!player) return true;
+	return player.dead ? true : false;
+}
+
+function lookupOpening() {
+	do {
+		opening++;
+		if (opening > 10) {
+			opening = 1;
+		}
+	} while(isDead(opening));
+	return opening;
 }
