@@ -50,23 +50,30 @@ function getPlayer(name) {
 
 // SEATING
 
-var mafTable;
-var mafSeatingReady;
+var table = initTable();
+var mafSeatingReady = new Var();
+
+function initTable() {
+	var table = [];
+	for (var i = 0; i < 10; i++) {
+		table.push({role: "civ", nominee: new Var(), dead: new Var(false)});
+	}
+	return table;
+}
+
+function player(num) {
+	return table[num - 1];
+}
 
 function seating() {
-	mafTable = [];
-	for (var i = 0; i < 10; i++) {
-		mafTable.push(null);
-	}
-	mafSeatingReady = new Var(false);
+	mafSeatingReady.set(false);
 	fireMafEvent({type: "seating"});
 }
 
 function sitPlayer(num, player) {
-	mafTable[num - 1] = player;
-	player.role = "civ";
+	table[num - 1].player = player;
 	for (var i = 0; i < 10; i++) {
-		if (mafTable[i] == null) {
+		if (table[i].player == null) {
 			return;
 		}
 	}
@@ -75,15 +82,15 @@ function sitPlayer(num, player) {
 
 // CASTING
 
-var mafCastingReady;
-var mafComplotReady;
-var mafLookoutReady;
+var mafCastingReady = new Var();
+var mafComplotReady = new Var();
+var mafLookoutReady = new Var();
 
 function casting() {
 	if (mafSeatingReady.get()) {
-		mafCastingReady = new Var(false);
-		mafComplotReady = new Var(true);
-		mafLookoutReady = new Var(true);
+		mafCastingReady.set(false);
+		mafComplotReady.set(true);
+		mafLookoutReady.set(true);
 		fireMafEvent({type: "casting"});
 	}
 }
@@ -103,15 +110,11 @@ function lookout() {
 }
 
 function getRole(num) {
-	var player = mafPlayers[num - 1];
-	if (player) {
-		return player.role;
-	}
-	return null;
+	return player(num).role;
 }
 
 function setRole(num, role) {
-	mafPlayers[num - 1].role = role;
+	player(num).role = role;
 	fireMafEvent({type: "role", num: num, role: role});
 	verifyRoles();
 }
@@ -119,7 +122,7 @@ function setRole(num, role) {
 function verifyRoles() {
 	var roles = {"civ": 6, "maf": 2, "com": 1, "don": 1};
 	for(var i = 0; i < 10; i++) {
-		var role = mafPlayers[i].role;
+		var role = table[i].role;
 		roles[role] = roles[role] - 1;
 	}
 	for (var role in roles) {
@@ -133,35 +136,41 @@ function verifyRoles() {
 
 // DAY
 
-var dayNum;
-var kill;
+var day = new Var();
 var opening;
+var speaker = new Var();
+var nextSpeaker = new Var();
 
 function wakeup() {
-	dayNum = new Var(0);
+	day.set(0);
 	opening = 0;
-	kill = null;
-	day();
+	newDay();
 }
 
-function day() {
-	dayNum.set(dayNum.get() + 1);
-	lookupOpening();
-	fireMafEvent({type: "day", num: dayNum.get()});
+function newDay() {
+	day.set(day.get() + 1);
+	opening = nextPlayer(opening);
+	nextSpeaker.set(opening);
+	fireMafEvent({type: "day", num: day.get()});
+}
+
+function speech() {
+	speaker.set(nextSpeaker.get());
+	fireMafEvent({type: "speech", num: speaker.get()});
+	var newSpeaker = nextPlayer(nextSpeaker.get());
+	nextSpeaker.set(newSpeaker != opening ? newSpeaker : null);
 }
 
 function isDead(num) {
-	var player = mafPlayers[num - 1];
-	if (!player) return true;
-	return player.dead ? true : false;
+	return player(num).dead.get();
 }
 
-function lookupOpening() {
+function nextPlayer(cur) {
 	do {
-		opening++;
-		if (opening > 10) {
-			opening = 1;
+		cur++;
+		if (cur > 10) {
+			cur = 1;
 		}
-	} while(isDead(opening));
-	return opening;
+	} while(isDead(cur));
+	return cur;
 }

@@ -66,13 +66,20 @@
 					Указав роли игроков, объявите <span id='mafCastingReady' onclick='wakeup()'>утро в городе</span>.
 				</div>
 				<div class="tool" id="day">
-					День №<span class="dayNum"></span>. На голосовании
+					День №<span class="day"></span>. На голосовании
 						<span id="voteNobody">никто не выставлен.</span>
-						<span id="voteList" style="display: none;">выставлены: .</span>
-
+						<span id="voteList" style="display: none;">выставлены: .</span><br>
+					<div id="nextSpeakerTime">
+						<span onclick="speech()" class="linkOn">Минута</span> игрока №<span class="nextSpeaker"></span>.
+					</div>
+				</div>
+				<div class="tool" id="nomination">
+					Игрок №<span class="speaker"></span> выставил на голосовании:
+					<div id="nominationNums">
+					</div>
 				</div>
 				<div class="tool" id="night">
-					Ночь №<span class="dayNum"></span>.
+					Ночь №<span class="day"></span>.
 				</div>
 				<div class="tool" id="timer">
 					<div id="clock"></div>
