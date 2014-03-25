@@ -64,6 +64,9 @@ function bindAll() {
 	bindDisplay(speaker, "#nomination");
 	bindVal(nextSpeaker, ".nextSpeaker");
 	bindDisplay(nextSpeaker, "#nextSpeakerTime");
+	bindNominees();
+	bindDisplay(nextSpeaker.convert(function(val) { return val == null ? true : null; }), "#toVoting");
+	bindVotingTable();
 }
 
 // PLAYERS
@@ -209,7 +212,9 @@ function fillNomination() {
 	var nums = $("#nominationNums");
 	var setNominee = function(val) {
 		return function() {
-			player(speaker.get()).nominee.set(val);
+			if (!$("#nominee" + val).hasClass("nomineeDisabled")) {
+				player(speaker.get()).nominee.set(val);
+			}
 		};
 	};
 	$("<span id='nomineeX' class='nominee nomineeNo'>X</span>").click(setNominee(null)).appendTo(nums);
@@ -231,6 +236,74 @@ function fillNomination() {
 			onNomineeChange(player(newVal).nominee.get(), oldVal == null ? null : player(oldVal).nominee.get());
 		}
 	});
+}
+
+function bindNominees() {
+	var f = function(val) {
+		if (val.length == 0) {
+			$("#voteNobody").show();
+			$("#voteList").hide();
+		} else {
+			$("#voteNobody").hide();
+			$("#voteList").show();
+			$(".nominees").text(val);
+		}
+		for (var i = 1; i <= 10; i++) {
+			var nominee = $("#nominee" + i);
+			if (val.indexOf(i) < 0 && !isDead(i)) {
+				nominee.removeClass("nomineeDisabled");
+			} else {
+				nominee.addClass("nomineeDisabled");
+				if (nominee.hasClass("nomineeActive")) {
+					nominee.removeClass("nomineeActive");
+					nominee.addClass("nomineeActive");
+				}
+			}
+		}
+	};
+	nominees.on(f);
+	f(nominees.get());
+}
+
+// VOTING
+
+function bindVotingTable() {
+	var f = function(val) {
+		var list = nominees.get();
+		if (val.length <= 1 || list.length != val.length) {
+			$("#voting").empty().hide();
+			return;
+		}
+		var applyVotes = function(num, count) {
+			return function() { setVotes(num, count); };
+		};
+
+		var container = $("#voting").empty().show();
+		var disableRaw = false;
+		var playerCount = getPlayerCount();
+		for (var i = 0; i < list.length; i++) {
+			var nominee = list[i];
+			var votes = val[i];
+			var raw = $("<div class='votingRaw'></div>").appendTo(container);
+			raw.append($("<span class='votingNominee'>" + nominee + ":</span>"));
+			for (var j = 0; j <= 10; j++) {
+				var votingCount = $("<span class='votingCount'>" + j + "</span>").click(applyVotes(i, j));
+				if (disableRaw || playerCount < j) {
+					votingCount.addClass("votingCountDisabled");
+				} else if (j == votes) {
+					votingCount.addClass("votingCountActive");
+				}
+				raw.append(votingCount);
+			}
+			if (votes < 0) {
+				disableRaw = true;
+			} else {
+				playerCount -= votes;
+			}
+		}
+	};
+	votingTable.on(f);
+	f(votingTable.get());
 }
 
 // TIMER

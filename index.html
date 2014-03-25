@@ -68,15 +68,20 @@
 				<div class="tool" id="day">
 					День №<span class="day"></span>. На голосовании
 						<span id="voteNobody">никто не выставлен.</span>
-						<span id="voteList" style="display: none;">выставлены: .</span><br>
+						<span id="voteList" style="display: none;">выставлены: <span class="nominees"></span>.</span><br>
 					<div id="nextSpeakerTime">
 						<span onclick="speech()" class="linkOn">Минута</span> игрока №<span class="nextSpeaker"></span>.
+					</div>
+					<div id="toVoting">
+						Перейти к <span onclick="voting()" class="linkOn">голосованию</span>.
 					</div>
 				</div>
 				<div class="tool" id="nomination">
 					Игрок №<span class="speaker"></span> выставил на голосовании:
 					<div id="nominationNums">
 					</div>
+				</div>
+				<div class="tool" id="voting">
 				</div>
 				<div class="tool" id="night">
 					Ночь №<span class="day"></span>.

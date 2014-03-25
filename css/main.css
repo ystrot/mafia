@@ -207,9 +207,14 @@
 	margin-left: 16px;
 }
 
+.nomineeDisabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
 .nomineeActive {
 	background-color: #8888ff;
-	cursor: default;
+	opacity: 1;
 }
 
 .nomineeNo {
@@ -219,6 +224,37 @@
 #nominationNums {
 	height: 20px;
 	margin-top: 5px;
+}
+
+.votingRaw {
+	height: 25px;
+}
+
+.votingNominee {
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	float: left;
+	margin-right: 30px;
+}
+
+.votingCount {
+	width: 20px;
+	height: 20px;
+	background-color: #bbbbbb;
+	text-align: center;
+	cursor: pointer;
+	float: left;
+	margin-left: 10px;
+}
+
+.votingCountActive {
+	background-color: #8888ff;
+}
+
+.votingCountDisabled {
+	opacity: 0.4;
+	cursor: default;
 }
 
 .tt-query {

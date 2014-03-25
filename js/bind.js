@@ -31,4 +31,11 @@ function Var(val) {
 			f(newVal, oldVal);
 		};
 	}
+	this.convert = function(f) {
+		var v = new Var(f(that.get()));
+		that.on(function(newVal) {
+			v.set(f(newVal));
+		});
+		return v;
+	}
 }

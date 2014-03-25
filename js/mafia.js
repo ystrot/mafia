@@ -56,7 +56,9 @@ var mafSeatingReady = new Var();
 function initTable() {
 	var table = [];
 	for (var i = 0; i < 10; i++) {
-		table.push({role: "civ", nominee: new Var(), dead: new Var(false)});
+		var player = {role: "civ", nominee: new Var(), dead: new Var(false)};
+		player.nominee.on(updateNominees);
+		table.push(player);
 	}
 	return table;
 }
@@ -137,13 +139,15 @@ function verifyRoles() {
 // DAY
 
 var day = new Var();
-var opening;
+var opening = null;
 var speaker = new Var();
 var nextSpeaker = new Var();
+var nominees = new Var([]);
+var votingTable = new Var([]);
 
 function wakeup() {
 	day.set(0);
-	opening = 0;
+	opening = 10;
 	newDay();
 }
 
@@ -161,8 +165,57 @@ function speech() {
 	nextSpeaker.set(newSpeaker != opening ? newSpeaker : null);
 }
 
+function updateNominees() {
+	if (opening == null) {
+		nominees.set([]);
+		return;
+	}
+	var list = [];
+	var num = opening;
+	do {
+		var nominee = player(num).nominee.get();
+		if (nominee != null) {
+			list.push(nominee);
+		}
+		num = nextPlayer(num);
+	} while(num != opening);
+	nominees.set(list);
+}
+
+function voting() {
+	var table = [];
+	var nomineeCount = nominees.get().length;
+	for (var i = 0; i < nomineeCount; i++) {
+		table.push(-1);
+	}
+	votingTable.set(table);
+	fireMafEvent({type: "voting"});
+}
+
+function setVotes(num, count) {
+	var table = votingTable.get().slice();
+	table[num] = count;
+	var votes = 0;
+	for (var i = 0; i <= num; i++) {
+		votes += table[i];
+	}
+	var completed = getPlayerCount() == votes;
+	for (var i = num + 1; i < table.length; i++) {
+		table[i] = completed ? 0 : -1;
+	}
+	if (num == table.length - 2 && !completed) {
+		table[num + 1] = getPlayerCount() - votes;
+	}
+	votingTable.set(table);
+
+}
+
 function isDead(num) {
 	return player(num).dead.get();
+}
+
+function getPlayerCount() {
+	return 10;
 }
 
 function nextPlayer(cur) {
