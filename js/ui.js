@@ -67,6 +67,10 @@ function bindAll() {
 	bindNominees();
 	bindDisplay(nextSpeaker.convert(function(val) { return val == null ? true : null; }), "#toVoting");
 	bindVotingTable();
+	bindDisplay(debaters, "#debate");
+	bindVal(debaters, ".debaters");
+	bindDisplay(leavers, "#leave");
+	bindVal(leavers, ".leavers");
 }
 
 // PLAYERS

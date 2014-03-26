@@ -144,6 +144,8 @@ var speaker = new Var();
 var nextSpeaker = new Var();
 var nominees = new Var([]);
 var votingTable = new Var([]);
+var debaters = new Var();
+var leavers = new Var();
 
 function wakeup() {
 	day.set(0);
@@ -188,6 +190,7 @@ function voting() {
 	for (var i = 0; i < nomineeCount; i++) {
 		table.push(-1);
 	}
+	speaker.set(null);
 	votingTable.set(table);
 	fireMafEvent({type: "voting"});
 }
@@ -196,18 +199,47 @@ function setVotes(num, count) {
 	var table = votingTable.get().slice();
 	table[num] = count;
 	var votes = 0;
+	var max = 0;
 	for (var i = 0; i <= num; i++) {
 		votes += table[i];
+		if (table[i] > max) {
+			max = table[i];
+		}
 	}
-	var completed = getPlayerCount() == votes;
+	var rest = getPlayerCount() - votes;
+	var complete = (rest == 0);
 	for (var i = num + 1; i < table.length; i++) {
-		table[i] = completed ? 0 : -1;
+		table[i] = complete ? 0 : -1;
 	}
-	if (num == table.length - 2 && !completed) {
-		table[num + 1] = getPlayerCount() - votes;
+	if (num == table.length - 2 && !complete) {
+		table[num + 1] = rest;
+		rest = 0;
+		complete = true;
 	}
 	votingTable.set(table);
+	if (complete || max > rest) {
+		calcVotingResult(table, max);
+	} else {
+		debaters.set(null);
+		leavers.set(null);
+	}
+}
 
+function calcVotingResult(table, max) {
+	var list = [];
+	var noms = nominees.get();
+	for (var i = 0; i < table.length; i++) {
+		if (table[i] == max) {
+			list.push(noms[i]);
+		}
+	}
+	if (list.length < 2) {
+		leavers.set(list);
+		debaters.set(null);
+	} else {
+		debaters.set(list);
+		leavers.set(null);
+	}
 }
 
 function isDead(num) {
